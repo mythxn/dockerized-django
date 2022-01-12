@@ -1,4 +1,7 @@
-version: "1"
+version: "3"
+
+volumes:
+  local_postgres_data: {}
 
 services:
   nginx:
@@ -7,6 +10,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ./src:/src
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - django
@@ -38,7 +42,6 @@ services:
       - ./.envs/.postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
-      - local_postgres_data_backups:/backups
     networks:
       - djangonetwork
   redis:

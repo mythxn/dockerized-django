@@ -4,6 +4,10 @@ FROM python:3.7-alpine
 ENV PYTHONUNBUFFERED 1
 ENV C_FORCE_ROOT true
 
+# Making source and static directory
+RUN mkdir /src
+RUN mkdir /static
+
 # Creating Work Directory
 WORKDIR /src
 
@@ -36,4 +40,4 @@ RUN apk del build-deps && \
     rm -rf ~/.cache/pip
 
 # CMD will run when this dockerfile is running
-CMD ["sh", "-c", "python manage.py migrate; gunicorn mydjango.wsgi -b 0.0.0.0:8000 & celery --app myapp.tasks worker --loglevel=INFO"]
+CMD ["sh", "-c", "python manage.py collectstatic --no-input; python manage.py migrate; gunicorn core.wsgi -b 0.0.0.0:8000 & celery --app myapp.tasks worker --loglevel=INFO"]
