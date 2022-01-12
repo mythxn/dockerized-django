@@ -1,0 +1,54 @@
+version: "1"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - django
+    networks:
+      - djangonetwork
+  django:
+    build:
+      context: .
+      dockerfile: compose/django/Dockerfile
+    container_name: django
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/src
+    expose:
+      - "8000"
+    links:
+      - redis
+    env_file:
+      - ./.envs/.django
+    networks:
+      - djangonetwork
+  postgres:
+    build:
+      context: .
+      dockerfile: compose/postgres/Dockerfile
+    container_name: postgres
+    env_file:
+      - ./.envs/.postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    networks:
+      - djangonetwork
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - djangonetwork
+
+networks:
+  djangonetwork:
+    driver: bridge
