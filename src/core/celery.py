@@ -14,6 +14,13 @@ app = Celery('core')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+app.conf.beat_schedule = {
+    'hourly-repeated-task': {
+        'task': 'myapp.tasks.show_hello_world',
+        'schedule': 3600,
+    },
+}
+
 app.autodiscover_tasks()
 
 

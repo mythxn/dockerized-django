@@ -1,13 +1,10 @@
 from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django.views import View
 
 from .tasks import show_hello_world
 
 
-# Create your views here.
-
-
-class ShowHelloWorld(TemplateView):
+class ShowHelloWorld(View):
 
     def get(self, *args, **kwargs):
         show_hello_world.apply()
